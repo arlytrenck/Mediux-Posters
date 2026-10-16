@@ -26,6 +26,7 @@ from mediux_posters.mediux import CollectionSet, File, FileType, Mediux, MovieSe
 from mediux_posters.services import (
     BaseService,
     Collection,
+    Emby,
     Episode,
     Jellyfin,
     Movie,
@@ -40,7 +41,7 @@ from mediux_posters.utils import delete_folder, slugify
 LOGGER = logging.getLogger(__name__)
 DEFAULT_CREATOR_RANK: Final[int] = 1_000_000
 MAX_IMAGE_SIZE: Final[int] = 10_000_000  # 10 MB
-SERVICE_REGISTRY: Final[list[tuple[type, str]]] = [(Plex, "plex"), (Jellyfin, "jellyfin")]
+SERVICE_REGISTRY: Final[list[tuple[type, str]]] = [(Plex, "plex"), (Jellyfin, "jellyfin"), (Emby, "emby")]
 ENTRY_FILE_MAP: Final[dict[FileType, str]] = {
     FileType.POSTER: "poster.jpg",
     FileType.BACKDROP: "backdrop.jpg",
@@ -60,6 +61,7 @@ EPISODE_FILE_MAP: Final[dict[FileType, str]] = {
 class ServiceOption(StrEnum):
     PLEX = Plex.__name__
     JELLYFIN = Jellyfin.__name__
+    EMBY = Emby.__name__
 
     def __str__(self) -> str:
         return self.value

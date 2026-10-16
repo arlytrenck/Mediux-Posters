@@ -21,6 +21,11 @@ class Covers(SettingsModel):
     store: bool = True
 
 
+class Emby(SettingsModel):
+    base_url: str = "http://127.0.0.1:8096"
+    token: Annotated[str | None, BeforeValidator(blank_is_none)] = None
+
+
 class Jellyfin(SettingsModel):
     base_url: str = "http://127.0.0.1:8096"
     token: Annotated[str | None, BeforeValidator(blank_is_none)] = None
@@ -61,6 +66,7 @@ class Settings(SettingsModel):
     only_priority_usernames: bool = False
     priority_usernames: list[str] = Field(default_factory=list)
     covers: Covers = Covers()
+    emby: Emby = Emby()
     jellyfin: Jellyfin = Jellyfin()
     mediux: Mediux = Mediux()
     plex: Plex = Plex()

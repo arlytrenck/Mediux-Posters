@@ -49,7 +49,7 @@ dependencies = [
   "rich-argparse >= 1.8.0",
   "tomli-w >= 1.2.0",
 ]
-description = "Fetches Show, Movie, and Collection cover art from Mediux and updates Plex/Jellyfin using TMDB IDs."
+description = "Fetches Show, Movie, and Collection cover art from Mediux and updates Plex/Jellyfin/Emby using TMDB IDs."
 dynamic = ["version"]
 keywords = []
 license = "MIT"
@@ -157,7 +157,7 @@ min_version = "4.22"
 [tool.tox.env_run_base]
 commands = [["pytest"]]
 dependency_groups = ["tests"]
-passenv = ["JELLYFIN__BASE_URL", "JELLYFIN__TOKEN", "MEDIUX__BASE_URL", "MEDIUX__TOKEN", "PLEX__BASE_URL", "PLEX__TOKEN"]
+passenv = ["EMBY__BASE_URL", "EMBY__TOKEN", "JELLYFIN__BASE_URL", "JELLYFIN__TOKEN", "MEDIUX__BASE_URL", "MEDIUX__TOKEN", "PLEX__BASE_URL", "PLEX__TOKEN"]
 
 [tool.ty.src]
 exclude = ["**/tests/"]

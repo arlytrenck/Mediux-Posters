@@ -31,6 +31,7 @@ class CacheData:
     last_updated: datetime
     plex_uploaded: datetime | None = None
     jellyfin_uploaded: datetime | None = None
+    emby_uploaded: datetime | None = None
 
 
 class ServiceCache:
@@ -64,17 +65,22 @@ class ServiceCache:
                     last_updated TIMESTAMP NOT NULL,
                     plex_uploaded TIMESTAMP NULL,
                     jellyfin_uploaded TIMESTAMP NULL,
+                    emby_uploaded TIMESTAMP NULL,
                     PRIMARY KEY (tmdb_id, season_num, episode_num, type)
                 );
                 """
             )
+            columns = {row["name"] for row in conn.execute("PRAGMA table_info(cache)")}
+            if "emby_uploaded" not in columns:  # database predates Emby support
+                conn.execute("ALTER TABLE cache ADD COLUMN emby_uploaded TIMESTAMP NULL")
             conn.commit()
 
     def select(self, key: CacheKey) -> CacheData | None:
         with self._connect() as conn:
             row = conn.execute(
                 f"""
-                SELECT creator, set_id, last_updated, plex_uploaded, jellyfin_uploaded
+                SELECT creator, set_id, last_updated, plex_uploaded, jellyfin_uploaded,
+                    emby_uploaded
                 FROM cache
                 WHERE {CACHE_QUERY};
                 """,  # noqa: S608
@@ -92,9 +98,14 @@ class ServiceCache:
                 jellyfin_uploaded=datetime.fromisoformat(row["jellyfin_uploaded"])
                 if row["jellyfin_uploaded"]
                 else None,
+                emby_uploaded=datetime.fromisoformat(row["emby_uploaded"])
+                if row["emby_uploaded"]
+                else None,
             )
 
-    def get_timestamp(self, key: CacheKey, service: Literal["Plex", "Jellyfin"]) -> datetime | None:
+    def get_timestamp(
+        self, key: CacheKey, service: Literal["Plex", "Jellyfin", "Emby"]
+    ) -> datetime | None:
         service_name = service.lower()
         with self._connect() as conn:
             row = conn.execute(
@@ -115,10 +126,11 @@ class ServiceCache:
                 """
                 INSERT INTO cache (
                     tmdb_id, season_num, episode_num, type, creator,
-                    set_id, last_updated, plex_uploaded, jellyfin_uploaded
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+                    set_id, last_updated, plex_uploaded, jellyfin_uploaded,
+                    emby_uploaded
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                 """,
-                (*key.as_tuple(), creator, set_id, last_updated.isoformat(), None, None),
+                (*key.as_tuple(), creator, set_id, last_updated.isoformat(), None, None, None),
             )
             conn.commit()
 
@@ -135,7 +147,7 @@ class ServiceCache:
             conn.commit()
 
     def update_service(
-        self, key: CacheKey, service: Literal["Plex", "Jellyfin"], timestamp: datetime | None
+        self, key: CacheKey, service: Literal["Plex", "Jellyfin", "Emby"], timestamp: datetime | None
     ) -> None:
         service_name = service.lower()
         with self._connect() as conn:

@@ -13,9 +13,9 @@
 [![Testing](https://github.com/Buried-In-Code/Mediux-Posters/actions/workflows/testing.yaml/badge.svg)](https://github.com/Buried-In-Code/Mediux-Posters/actions/workflows/testing.yaml)
 [![Publishing](https://github.com/Buried-In-Code/Mediux-Posters/actions/workflows/publishing.yaml/badge.svg)](https://github.com/Buried-In-Code/Mediux-Posters/actions/workflows/publishing.yaml)
 
-Fetches Show, Movie, and Collection cover art from Mediux and updates Plex/Jellyfin using TMDB IDs.
+Fetches Show, Movie, and Collection cover art from Mediux and updates Plex/Jellyfin/Emby using TMDB IDs.
 
-_Jellyfin Collections are not yet supported._
+_Jellyfin and Emby Collections are not yet supported._
 
 ## Installation
 
@@ -63,7 +63,7 @@ _Jellyfin Collections are not yet supported._
 
 ## Settings
 
-To set Plex and/or Jellyfin details, update the file: `~/.config/mediux-posters/settings.toml`.
+To set Plex, Jellyfin and/or Emby details, update the file: `~/.config/mediux-posters/settings.toml`.
 File will be created on first run.
 
 ### Example File
@@ -77,6 +77,10 @@ priority_usernames = []
 [covers]
 path = "~/.cache/mediux-posters/covers"
 store = true
+
+[emby]
+base_url = "http://127.0.0.1:8096"
+token = "<Token>"
 
 [jellyfin]
 base_url = "http://127.0.0.1:8096"
